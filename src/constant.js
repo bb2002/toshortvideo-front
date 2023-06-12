@@ -1,0 +1,1 @@
+export const UPLOAD_API = 'https://tsvapi.blbt.app/editor/upload'
