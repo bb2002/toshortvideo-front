@@ -16,6 +16,7 @@
     ],
     "rules": {
         "no-tabs": "off",
-        "no-mixed-spaces-and-tabs": "off"
+        "no-mixed-spaces-and-tabs": "off",
+        "react/prop-types": "off"
     }
 }
