@@ -1,6 +1,7 @@
+import React from 'react'
 import '../css/header.css'
-import { Menu } from 'antd';
-import { styled } from 'styled-components';
+import { Menu } from 'antd'
+import { styled } from 'styled-components'
 
 const Logo = styled.div`
 	width: 140px;
@@ -36,4 +37,4 @@ const HeaderComp = () => {
   )
 }
 
-export default HeaderComp;
+export default HeaderComp
