@@ -1,7 +1,5 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-tabs */
 import React, { useState } from 'react'
-import { Form, Typography, Input, Select, Slider } from 'antd'
+import { Form, Typography, Input, Select } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { styled } from 'styled-components'
 
@@ -78,33 +76,44 @@ const EditorInputGroup = styled.div`
 `
 
 const VideoEditor = ({ data }) => {
-  const [recipe, setRecipe] = useState([
-    {
-      uuid: 'f04b8ae7-27bc-48bf-bff1-0507aac0e2f2',
-      recipe: {
-        text1: {
-          text: '진짜제발되라진짜',
-          color: '#F5FF15',
-          font: 'SCDream',
-          weight: 'Bold',
-          fontSize: 0.12
-        },
-        text2: {
-          text: '제발되라하진짜제발',
-          color: '#FFFFFF',
-          font: 'SCDream',
-          weight: 'Bold',
-          fontSize: 0.1
-        },
-        video: {
-          startAt: 5,
-          endAt: 17,
-          blankFill: 'Blur',
-          videoSize: '0.65'
-        }
-      }
+  const [recipe, setRecipe] = useState({
+    text1: {
+      text: '진짜제발되라진짜',
+      color: '#F5FF15',
+      font: 'NotoSansKR',
+      weight: 'Bold',
+      fontSize: 0.12
+    },
+    text2: {
+      text: '제발되라하진짜제발',
+      color: '#FFFFFF',
+      font: 'NotoSansKR',
+      weight: 'Bold',
+      fontSize: 0.1
+    },
+    video: {
+      startAt: 5,
+      endAt: 17,
+      blankFill: 'Blur',
+      videoSize: '0.65'
     }
-  ])
+  })
+
+  const onInputChanged = ({ target }) => {
+    const [depth1, depth2] = target.id.split('.')
+    const newRecipe = { ...recipe }
+    newRecipe[depth1][depth2] = target.value
+    setRecipe(newRecipe)
+  }
+
+  const onText1FontChanged = (value) => {
+    onInputChanged({
+      target: {
+        id: 'text1.font',
+        value
+      }
+    })
+  }
 
   return (
 		<VideoEditorContainer>
@@ -127,22 +136,22 @@ const VideoEditor = ({ data }) => {
 						<Form.Item
 							label="상단 텍스트"
 							tooltip={{ title: '최대 20자 까지 입력 가능', icon: <InfoCircleOutlined /> }}>
-							<Input type="text" placeholder="상단 텍스트 입력" maxLength={20}/>
+							<Input id="text1.text" type="text" placeholder="상단 텍스트 입력" maxLength={20} onChange={onInputChanged} value={recipe.text1.text} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
 						<Form.Item label="상단 텍스트 색상">
-							<Input type="color" />
+							<Input id="text1.color" type="color" onChange={onInputChanged} value={recipe.text1.color} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
 						<Form.Item label="상단 텍스트 크기">
-							<Input type="range" min={0.05} max={0.15} step={0.01} value={0.1} />
+							<Input id="text1.fontSize" type="range" min={0.05} max={0.15} step={0.01} value={recipe.text1.fontSize} onChange={onInputChanged} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
 						<Form.Item label="상단 텍스트 폰트">
-							<Select defaultValue="NotoSans">
+							<Select defaultValue="NotoSansKR" onSelect={onText1FontChanged}>
 								<Select.Option value="NotoSansKR">NotoSansKR</Select.Option>
 								<Select.Option value="SCDream">SCDream</Select.Option>
 							</Select>
