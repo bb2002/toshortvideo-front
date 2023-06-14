@@ -1,0 +1,39 @@
+@font-face {
+    font-family: "BMJUA";
+    src: url('../fonts/BMJUA.otf');
+}
+
+@font-face {
+    font-family: "Cafe24Danjunghae";
+    src: url('../fonts/Cafe24Danjunghae.otf');
+}
+
+@font-face {
+    font-family: "Cafe24Shiningstar";
+    src: url('../fonts/Cafe24Shiningstar.otf');
+}
+
+@font-face {
+    font-family: "Jalnan";
+    src: url('../fonts/Jalnan.otf');
+}
+
+@font-face {
+    font-family: "NotoSansKR";
+    src: url('../fonts/NotoSansKR.otf');
+}
+
+@font-face {
+    font-family: "Reko";
+    src: url('../fonts/Reko.otf');
+}
+
+@font-face {
+    font-family: "SCDream";
+    src: url('../fonts/SCDream.otf');
+}
+
+@font-face {
+    font-family: "GangwonTeunTeun";
+    src: url('../fonts/GangwonTeunTeun.otf');
+}
