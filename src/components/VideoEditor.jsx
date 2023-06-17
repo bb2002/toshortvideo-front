@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, Typography, Input, Select, Space } from 'antd'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { styled } from 'styled-components'
@@ -72,34 +72,15 @@ const EditorInputGroup = styled.div`
 	width: 100%;
 `
 
-const VideoEditor = ({ data }) => {
-  const [recipe, setRecipe] = useState({
-    text1: {
-      text: 'TEXT1',
-      color: '#FF0000',
-      font: 'NotoSansKR',
-      fontSize: 0.1
-    },
-    text2: {
-      text: 'TEXT2',
-      color: '#FF0000',
-      font: 'NotoSansKR',
-      fontSize: 0.1
-    },
-    video: {
-      startAt: 0,
-      endAt: data.videoDuration,
-      blankFill: 'Black',
-      videoSize: '0.65'
-    }
-  })
+const VideoEditor = ({ defaultRecipe, data, onRecipeChanged }) => {
+  const [recipe, setRecipe] = useState(defaultRecipe)
 
   const onInputChanged = ({ target }) => {
     const [depth1, depth2] = target.id.split('.')
     const newRecipe = { ...recipe }
     newRecipe[depth1][depth2] = target.value
     setRecipe(newRecipe)
-    console.log(newRecipe)
+		onRecipeChanged(newRecipe);
   }
 
   return (

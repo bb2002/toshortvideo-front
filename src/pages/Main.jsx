@@ -4,55 +4,52 @@ import HeaderComp from '../components/Header'
 import { Alert, Button, Collapse, Typography, Upload } from 'antd'
 import { VideoCameraAddOutlined, RocketOutlined } from '@ant-design/icons'
 import VideoEditor from '../components/VideoEditor'
+import Footer from '../components/Footer'
+import axios from 'axios'
+import { REQUEST_ENCODE_API, UPLOAD_API } from '../constant'
+import { redirect } from "react-router-dom";
+import HeadLineComp from '../components/HeadLine'
 
 const { Dragger } = Upload
-
-const Headline = styled.div`
-	margin-top: 96px;
-	margin-bottom: 96px;
-
-	#headline-title {
-		text-align: center;
-		color: #FA8231;
-		margin-bottom: 8px;
-	}
-
-	#headline-content {
-		text-align: center;
-		color: #5A5A5A;
-		font-size: 0.82rem;
-	}
-`
 
 const ButtonContainer = styled.div`
 	width: 100%;
 	margin-top: 16px;
 	margin-bottom: 64px;
 	display: flex;
-	
 `
+
+const getDefaultRecipe = (data) => ({
+	text1: {
+		text: 'TEXT1',
+		color: '#FF0000',
+		font: 'NotoSansKR',
+		fontSize: 0.1
+	},
+	text2: {
+		text: 'TEXT2',
+		color: '#FF0000',
+		font: 'NotoSansKR',
+		fontSize: 0.1
+	},
+	video: {
+		startAt: 0,
+		endAt: data.videoDuration,
+		blankFill: 'Black',
+		videoSize: '0.65'
+	}
+})
 
 const MainPage = () => {
   const [errorAlert, setErrorAlert] = useState(null)
   const [uploadingFile, setUploadingFile] = useState(null)
-  const [uploadedFiles, setUploadedFiles] = useState([{
-    response: {
-      uuid: '22c61ea6-789c-4de0-a447-20f1f8b87c60',
-      originalVideoName: 'video.mp4',
-      videoSize: 1128375,
-      videoMimetype: 'video/mp4',
-      videoDuration: 5.055,
-      downloadUrl: 'https://toshortvideo.d472b93232e7d3b8189d494a36bc92a8.r2.cloudflarestorage.com/uploadedVideos/22c61ea6-789c-4de0-a447-20f1f8b87c60?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=2ed46946fc06273087b504258cf4a3bf%2F20230603%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230603T085539Z&X-Amz-Expires=86400&X-Amz-Signature=931692b492cc4496ff38ee2b1c45823c8f3c89cc9453c90059f5732dc3eb9439&X-Amz-SignedHeaders=host',
-      thumbnailUrl: 'https://toshortvideo.d472b93232e7d3b8189d494a36bc92a8.r2.cloudflarestorage.com/thumbnailImages/408db8f7-9f59-4ef8-a3c8-8ecfb1391853?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=2ed46946fc06273087b504258cf4a3bf%2F20230603%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230603T085539Z&X-Amz-Expires=86400&X-Amz-Signature=8dc723c790335c31e35e9c03b334935b6c752c0dc64d91903404a60c3f3c1155&X-Amz-SignedHeaders=host',
-      expiredAt: '2023-06-04T08:55:39.827Z',
-      id: 2,
-      createdAt: '2023-06-02T23:55:39.856Z'
-    }
-  }])
+  const [uploadedFiles, setUploadedFiles] = useState([])
+	const [encodingRecipe, setEncodingRecipe] = useState([])
+	const [isEncodingRequested, setIsEncodingRequested] = useState(false)
 
   const props = {
-    action: 'https://tsvapi.blbt.app/editor/upload',
-    multiple: true,
+    action: UPLOAD_API,
+    multiple: false,
     method: 'PUT',
     name: 'file',
     onChange (info) {
@@ -63,7 +60,9 @@ const MainPage = () => {
         setErrorAlert(null)
       } else {
         if (status === 'done') {
+					const data = info.file.response
           setUploadedFiles([...uploadedFiles, info.file])
+					setEncodingRecipe([...encodingRecipe, { uuid: data.uuid, recipe: getDefaultRecipe(data) }])
         }
 
         if (status === 'error') {
@@ -75,14 +74,26 @@ const MainPage = () => {
     }
   }
 
+	const onRequestEncodeingButtonClicked = async () => {
+		setIsEncodingRequested(true)
+		axios.post(REQUEST_ENCODE_API, encodingRecipe).then((response) => {
+			const { data } = response
+			window.location.href = `/${data.orderUUID}`
+		}).catch((ex) => {
+			setErrorAlert(ex.message)
+		})
+	}
+
+	const onRecipeChanged = (recipe, uuid) => {
+		const recipes = encodingRecipe.filter((recipe) => recipe.uuid !== uuid);
+		setEncodingRecipe([...recipes, { uuid, recipe }])
+	}
+
   return (
 		<>
 			<HeaderComp />
 			<div className="container">
-				<Headline>
-					<Typography.Title level={1} id="headline-title">세상에서 가장 빠르게 숏츠 영상 만들기</Typography.Title>
-					<p id="headline-content">1분짜리 영상 만드는데 편집만 20분? 이제 영상 업로드하고 글자만 바꿔 숏츠 영상을 찍어내세요.</p>
-				</Headline>
+				<HeadLineComp />
 
 				{
 					errorAlert && <>
@@ -92,13 +103,22 @@ const MainPage = () => {
 
 				{
 					uploadedFiles.length > 0 && <>
-						<Collapse accordion items={uploadedFiles.map(({ response }) => ({
+						<Collapse accordion defaultActiveKey={encodingRecipe.map((recipe => recipe.uuid))} items={uploadedFiles.map(({ response }) => ({
 						  key: response.uuid,
 						  label: response.originalVideoName,
-						  children: <VideoEditor data={response} />
+						  children: <VideoEditor 
+								data={response}
+								defaultRecipe={getDefaultRecipe(response)}
+								onRecipeChanged={(recipe) => onRecipeChanged(recipe, response.uuid)} />
 						}))} />
 						<ButtonContainer>
-							<Button type="primary" icon={<RocketOutlined />} size="large" style={{ marginLeft: 'auto' }}>
+							<Button 
+								type="primary"
+								icon={<RocketOutlined />}
+								size="large"
+								style={{ marginLeft: 'auto' }}
+								onClick={onRequestEncodeingButtonClicked}
+								loading={isEncodingRequested}>
 								인코딩 시작
 							</Button>
 						</ButtonContainer>
@@ -116,6 +136,8 @@ const MainPage = () => {
 						mp4, mkv 확장의 파일을 지원하며, 업로드된 파일은 상단 &apos;개발팀&apos;의 업로드 정책을 따릅니다.
 					</p>
 				</Dragger>
+
+				<Footer />
 			</div>
 		</>
   )

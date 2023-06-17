@@ -4,11 +4,18 @@ import 'antd/dist/reset.css'
 import reportWebVitals from './reportWebVitals'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import MainPage from './pages/Main'
+import QueuePage from './pages/Queue'
 
-const router = createBrowserRouter([{
-  path: '/',
-  element: <MainPage />
-}])
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <MainPage />
+  },
+  {
+    path: '/:uuid',
+    element: <QueuePage />
+  }
+])
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
