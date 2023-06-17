@@ -28,6 +28,8 @@ const ButtonContainer = styled.div`
 	width: 100%;
 	margin-top: 16px;
 	margin-bottom: 64px;
+	display: flex;
+	
 `
 
 const MainPage = () => {
