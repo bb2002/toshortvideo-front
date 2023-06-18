@@ -7,7 +7,6 @@ import VideoEditor from '../components/VideoEditor'
 import Footer from '../components/Footer'
 import axios from 'axios'
 import { REQUEST_ENCODE_API, UPLOAD_API } from '../constant'
-import { redirect } from "react-router-dom";
 import HeadLineComp from '../components/HeadLine'
 
 const { Dragger } = Upload

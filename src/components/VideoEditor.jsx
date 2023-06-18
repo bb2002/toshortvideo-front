@@ -80,7 +80,7 @@ const VideoEditor = ({ defaultRecipe, data, onRecipeChanged }) => {
     const newRecipe = { ...recipe }
     newRecipe[depth1][depth2] = target.value
     setRecipe(newRecipe)
-		onRecipeChanged(newRecipe);
+		onRecipeChanged(newRecipe)
   }
 
   return (
@@ -128,7 +128,19 @@ const VideoEditor = ({ defaultRecipe, data, onRecipeChanged }) => {
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
 						<Form.Item label="상단 텍스트 크기">
-							<Input id="text1.fontSize" type="range" min={0.05} max={0.15} step={0.01} value={recipe.text1.fontSize} onChange={onInputChanged} />
+							<Input 
+								id="text1.fontSize" 
+								type="range" 
+								min={0.05} 
+								max={0.15} 
+								step={0.01}
+								value={recipe.text1.fontSize}
+								onChange={({ target }) => onInputChanged({
+									target: {
+										id: 'text1.fontSize',
+								    value: Number(target.value)
+									}
+								})} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.75, marginLeft: 8 }}>
@@ -169,7 +181,19 @@ const VideoEditor = ({ defaultRecipe, data, onRecipeChanged }) => {
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
 						<Form.Item label="하단 텍스트 크기">
-							<Input id="text2.fontSize" type="range" min={0.05} max={0.15} step={0.01} value={recipe.text2.fontSize} onChange={onInputChanged} />
+							<Input 
+								id="text2.fontSize" 
+								type="range" 
+								min={0.05} 
+								max={0.15} 
+								step={0.01}
+								value={recipe.text2.fontSize} 
+								onChange={({ target }) => onInputChanged({
+									target: {
+										id: 'text2.fontSize',
+								    value: Number(target.value)
+									}
+								})} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.75, marginLeft: 8 }}>
@@ -198,12 +222,38 @@ const VideoEditor = ({ defaultRecipe, data, onRecipeChanged }) => {
 				<EditorInputGroup>
 					<Form layout="vertical" style={{ flex: 0.5 }}>
 						<Form.Item label="비디오 시작 시간">
-							<Input type="number" id="video.startAt" addonAfter="초" defaultValue={0} min={0} max={data.videoDuration} step={0.1} onChange={onInputChanged} />
+							<Input 
+								type="number" 
+								id="video.startAt" 
+								addonAfter="초" 
+								defaultValue={0} 
+								min={0} 
+								max={data.videoDuration} 
+								step={0.1} 
+								onChange={({ target }) => onInputChanged({
+									target: {
+										id: 'video.startAt',
+										value: Number(target.value)
+									}
+								})} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
 						<Form.Item label="비디오 종료 시간">
-							<Input type="number" id="video.endAt" addonAfter="초" defaultValue={data.videoDuration > 60 ? 60 : data.videoDuration} min={0} max={data.videoDuration} step={0.1} onChange={onInputChanged} />
+							<Input 
+								type="number" 
+								id="video.endAt" 
+								addonAfter="초" 
+								defaultValue={data.videoDuration > 60 ? 60 : data.videoDuration} 
+								min={recipe.video.startAt} 
+								max={data.videoDuration} 
+								step={0.1} 
+								onChange={({ target }) => onInputChanged({
+									target: {
+										id: 'video.endAt',
+										value: Number(target.value)
+									}
+								})} />
 						</Form.Item>
 					</Form>
 					<Form layout="vertical" style={{ flex: 0.5, marginLeft: 8 }}>
